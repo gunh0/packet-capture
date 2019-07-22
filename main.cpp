@@ -23,8 +23,8 @@ struct ip_header // by IP header order & Size : minimum 20 Bytes
     u_int8_t time_to_live;
     u_int8_t protocol;
     u_int16_t header_checksum;
-    struct in_addr source_address;
-    struct in_addr destination_address;
+    u_int8_t source_address[4];
+    u_int8_t destination_address[4];
 };
 
 struct tcp_header // by TCP header order & Size : minimum 20 Bytes
@@ -44,6 +44,11 @@ void printMacAddr(const u_char* pdata)
 {
     printf("MAC Address : %02x:%02x:%02x:%02x:%02x:%02x\n",
            pdata[0], pdata[1], pdata[2], pdata[3], pdata[4], pdata[5]);
+}
+
+void printIPAddr(u_int8_t* pdata)
+{
+    printf("%d.%d.%d.%d\n",pdata[0],pdata[1],pdata[2],pdata[3]);
 }
 
 void print_pData(int datalen, const u_char* Packet_DATA)
@@ -99,8 +104,10 @@ int main(int argc, char* argv[]) {
             // 4 : IP / 5 : ST / 6 : SIP, SIPP, IPv6
             // 7 : TP/IX / 8 : PIP / 9 : TUBA
 
-            printf(" Source IP Address : %s\n", inet_ntoa(IP->source_address));
-            printf(" Destination IP Address : %s\n", inet_ntoa(IP->destination_address));
+            printf(" Source IP Address : ");
+            printIPAddr(IP->source_address);
+            printf(" Destination IP Address : ");
+            printIPAddr(IP->destination_address);
 
             if(IP->protocol== 0x06) // 06 : TCP, 17: UDP
             {
